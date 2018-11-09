@@ -16,7 +16,7 @@ setup(
     keywords="CKAN MSP Catalogue",
     url="http://todo.todo",
     packages=['mspkc'],
-    long_description=read('README'),
+    long_description=read('README.md'),
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Topic :: Utilities",
