@@ -37,18 +37,20 @@ class Mspkc:
 
     def update_df(self):
         self.df = pd.DataFrame(self.results)
+        self.df['org'] = self.df.organization.apply(pd.Series).title
 
     def load(self, id=None, chunks=100):
         """ """
         start = 0
         count = chunks
-        self.results = []
+
         if id is not None:
             res = self.ckan.action.package_show(id=id)
             self.update_result(res)
             logger.debug("load - package {} loaded".format(id))
             return True
 
+        self.results = []        
         while len(self.results) < count:
             logger.debug('load - loading chunk {}'.format(count))
             res = self.ckan.action.package_search(include_private=True,
@@ -69,19 +71,24 @@ class Mspkc:
     #     self.ckan.action.package_update(**res)
     #     self.load(id=res['id'])
 
-    def bulk_replace(self, field, oldval, newval, mode='multi'):
+    def bulk_replace(self, field, oldval, newval, mode='multi', org=None, dfquery=None):
         vals = None
-
-        vals = self.df[field].str.split(',', expand=True)
+        df = self.df.copy()
+        if org is not None:
+            df = df[df.org == org].copy()
+        if dfquery is not None:
+            df = df.query(dfquery)
+        vals = df[field].str.split(',', expand=True)            
         condition = vals == oldval
         vals[condition] = newval
         changedrows = vals[condition.any(axis=1)]
         if changedrows.shape[0] > 0:
             newvalues = changedrows.apply(lambda x: x.str.cat(sep=','), axis=1)
             for idx, value in newvalues.iteritems():
+                print idx
                 r = self.results[idx]
-                print idx, "Update value", r['domain_area'], '-', value
-                r['domain_area'] = value
+                print idx, "Update value", r[field], '-', value
+                r[field] = value
                 self.package_update(r)
         else:
             pass
