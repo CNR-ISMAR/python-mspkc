@@ -16,6 +16,7 @@ setup(
     keywords="CKAN MSP Catalogue",
     url="http://todo.todo",
     packages=['mspkc'],
+    install_requires=['ckanapi', 'pandas'],
     long_description=read('README.md'),
     classifiers=[
         "Development Status :: 3 - Alpha",
