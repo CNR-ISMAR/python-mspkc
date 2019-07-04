@@ -7,7 +7,7 @@ def read(fname):
 
 
 setup(
-    name="MSP Knowledge Catalogue client",
+    name="mspkc",
     version="0.1",
     author="Stefano Menegon",
     author_email="stefano.menegon@ismar.cnr.it",
